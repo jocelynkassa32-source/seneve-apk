@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Télécharger Seneve App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+        }
+        h2 { margin: 10px 0 5px; color: #333; }
+        p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        
+        .btn-install {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .btn-install:hover { background-color: #0056b3; }
+
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+        .status-text {
+            font-size: 13px;
+            color: #007bff;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .progress-bar-bg {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 12px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background-color: #007bff;
+            height: 100%;
+            width: 0%;
+            transition: width 0.2s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Seneve App</h2>
+    <p>Application officielle Android</p>
+
+    <button id="downloadBtn" class="btn-install" onclick="startDownload()">Installer l'application</button>
+
+    <div id="progressContainer" class="progress-container">
+        <div id="statusText" class="status-text">Préparation de l'installation... 0%</div>
+        <div class="progress-bar-bg">
+            <div id="progressBar" class="progress-bar-fill"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+function startDownload() {
+    const btn = document.getElementById('downloadBtn');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const statusText = document.getElementById('statusText');
+
+    btn.style.display = 'none';
+    progressContainer.style.display = 'block';
+
+    // Lien direct vers ton fichier APK hébergé sur GitHub Releases
+    const apkUrl = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/download/v1.0.0/app-release.apk'; 
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', apkUrl, true);
+    xhr.responseType = 'blob';
+
+    xhr.onprogress = function(event) {
+        if (event.lengthComputable) {
+            const percentComplete = Math.round((event.loaded / event.total) * 100);
+            progressBar.style.width = percentComplete + '%';
+            statusText.innerText = `Préparation de l'installation... ${percentComplete}%`;
+        } else {
+            statusText.innerText = `Téléchargement en cours...`;
+        }
+    };
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            statusText.innerText = "Téléchargement terminé ! Lancement de l'installation...";
+            progressBar.style.backgroundColor = "#28a745";
+
+            const blob = xhr.response;
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = "Seneve-App.apk";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            setTimeout(() => {
+                statusText.innerHTML = "Si l'installation ne démarre pas, ouvrez le fichier <b>Seneve-App.apk</b> dans vos téléchargements et autorisez la source.";
+            }, 2000);
+        } else {
+            statusText.innerText = "Erreur de téléchargement du fichier APK.";
+        }
+    };
+
+    xhr.onerror = function() {
+        statusText.innerText = "Erreur réseau pendant le téléchargement.";
+    };
+
+    xhr.send();
+}
+</script>
+
+</body>
+</html>
