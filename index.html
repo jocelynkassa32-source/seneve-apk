@@ -61,7 +61,14 @@
             background-color: #007bff;
             height: 100%;
             width: 0%;
-            transition: width 0.2s;
+            transition: width 0.3s;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
     </style>
 </head>
@@ -74,7 +81,7 @@
     <button id="downloadBtn" class="btn-install" onclick="startDownload()">Installer l'application</button>
 
     <div id="progressContainer" class="progress-container">
-        <div id="statusText" class="status-text">Préparation de l'installation... 0%</div>
+        <div id="statusText" class="status-text">Préparation du téléchargement...</div>
         <div class="progress-bar-bg">
             <div id="progressBar" class="progress-bar-fill"></div>
         </div>
@@ -82,7 +89,7 @@
 </div>
 
 <script>
-function startDownload() {
+async function startDownload() {
     const btn = document.getElementById('downloadBtn');
     const progressContainer = document.getElementById('progressContainer');
     const progressBar = document.getElementById('progressBar');
@@ -91,50 +98,44 @@ function startDownload() {
     btn.style.display = 'none';
     progressContainer.style.display = 'block';
 
-    // Lien direct vers ton fichier APK hébergé sur GitHub Releases
-    const apkUrl = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/download/v1.0.0/app-release.apk'; 
+    const apkUrl = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/download/v1.0.0/app-release.apk';
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', apkUrl, true);
-    xhr.responseType = 'blob';
+    try {
+        statusText.innerText = "Téléchargement en cours...";
+        progressBar.style.width = '50%';
 
-    xhr.onprogress = function(event) {
-        if (event.lengthComputable) {
-            const percentComplete = Math.round((event.loaded / event.total) * 100);
-            progressBar.style.width = percentComplete + '%';
-            statusText.innerText = `Préparation de l'installation... ${percentComplete}%`;
-        } else {
-            statusText.innerText = `Téléchargement en cours...`;
-        }
-    };
+        const response = await fetch(apkUrl);
+        if (!response.ok) throw new Error('Erreur réseau');
 
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            statusText.innerText = "Téléchargement terminé ! Lancement de l'installation...";
-            progressBar.style.backgroundColor = "#28a745";
+        const blob = await response.blob();
+        progressBar.style.width = '100%';
+        progressBar.style.backgroundColor = '#28a745';
+        statusText.innerText = "Téléchargement terminé ! Lancement de l'installation...";
 
-            const blob = xhr.response;
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = "Seneve-App.apk";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = "Seneve-App.apk";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
 
-            setTimeout(() => {
-                statusText.innerHTML = "Si l'installation ne démarre pas, ouvrez le fichier <b>Seneve-App.apk</b> dans vos téléchargements et autorisez la source.";
-            }, 2000);
-        } else {
-            statusText.innerText = "Erreur de téléchargement du fichier APK.";
-        }
-    };
+    } catch (error) {
+        // En cas de blocage CORS/Réseau par Android, basculement automatique sur le téléchargement direct
+        statusText.innerText = "Lancement du téléchargement direct...";
+        progressBar.style.width = '100%';
+        
+        const a = document.createElement('a');
+        a.href = apkUrl;
+        a.download = "Seneve-App.apk";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
 
-    xhr.onerror = function() {
-        statusText.innerText = "Erreur réseau pendant le téléchargement.";
-    };
-
-    xhr.send();
+    setTimeout(() => {
+        statusText.innerHTML = "Si l'installation ne démarre pas, vérifiez vos <b>Téléchargements</b> et ouvrez le fichier <b>app-release.apk</b>.";
+    }, 3000);
 }
 </script>
 
