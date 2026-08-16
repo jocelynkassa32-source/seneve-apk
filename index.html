@@ -70,6 +70,17 @@
             50% { opacity: 1; }
             100% { opacity: 0.6; }
         }
+
+        .alt-links {
+            margin-top: 18px;
+            font-size: 12px;
+            color: #999;
+        }
+        .alt-links a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .alt-links a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -86,9 +97,16 @@
             <div id="progressBar" class="progress-bar-fill"></div>
         </div>
     </div>
+
+    <div class="alt-links">
+        Téléphone ancien ? <a href="https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-armeabi-v7a-release.apk">Télécharger la version armeabi-v7a</a>
+    </div>
 </div>
 
 <script>
+const apkUrl = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-arm64-v8a-release.apk';
+const apkFileName = 'Seneve-App.apk';
+
 async function startDownload() {
     const btn = document.getElementById('downloadBtn');
     const progressContainer = document.getElementById('progressContainer');
@@ -97,8 +115,6 @@ async function startDownload() {
 
     btn.style.display = 'none';
     progressContainer.style.display = 'block';
-
-    const apkUrl = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-release.apk';
 
     try {
         statusText.innerText = "Téléchargement en cours...";
@@ -115,7 +131,7 @@ async function startDownload() {
         const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = downloadUrl;
-        a.download = "Seneve-App.apk";
+        a.download = apkFileName;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -127,14 +143,14 @@ async function startDownload() {
         
         const a = document.createElement('a');
         a.href = apkUrl;
-        a.download = "Seneve-App.apk";
+        a.download = apkFileName;
         document.body.appendChild(a);
         a.click();
         a.remove();
     }
 
     setTimeout(() => {
-        statusText.innerHTML = "Si l'installation ne démarre pas, vérifiez vos <b>Téléchargements</b> et ouvrez le fichier <b>app-release.apk</b>.";
+        statusText.innerHTML = "Si l'installation ne démarre pas, vérifiez vos <b>Téléchargements</b> et ouvrez le fichier <b>app-arm64-v8a-release.apk</b>.";
     }, 3000);
 }
 </script>
