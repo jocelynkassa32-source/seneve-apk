@@ -254,17 +254,18 @@ function detectAbi() {
             .then(({ architecture, bitness }) => {
                 const arch = (architecture || '').toLowerCase();
                 const bits = (bitness || '').toLowerCase();
-                if (arch.includes('arm')) return bits.includes('64') ? 'arm64-v8a' : 'armeabi-v7a';
                 if (arch.includes('x86')) return 'x86_64';
-                return 'arm64-v8a';
+                if (arch.includes('arm')) return bits.includes('64') ? 'arm64-v8a' : 'armeabi-v7a';
+                return 'armeabi-v7a';
             })
-            .catch(() => 'arm64-v8a');
+            .catch(() => 'armeabi-v7a');
     }
     const platform = (navigator.platform || '').toLowerCase();
-    if (platform.includes('arm')) {
-        return Promise.resolve(/v7l/.test(platform) ? 'armeabi-v7a' : 'arm64-v8a');
+    const ua = (navigator.userAgent || '').toLowerCase();
+    if (platform.includes('x86') || ua.includes('x86_64') || ua.includes('wow64') || ua.includes('i686')) {
+        return Promise.resolve('x86_64');
     }
-    return Promise.resolve('arm64-v8a');
+    return Promise.resolve('armeabi-v7a');
 }
 
 detectAbi().then(abi => {
