@@ -3,157 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Télécharger Seneve App</title>
+    <meta name="theme-color" content="#0d5c3c">
+    <meta name="description" content="Téléchargez l'application officielle Sénevé (CPC Bénin) — Enseignements, dons et évangélisation.">
+    <title>Télécharger Sénevé — CPC Bénin</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --green: #2E7D32;
+            --green-dark: #0d5c3c;
+            --green-soft: #e8f5e9;
+            --green-light: #a5d6a7;
+            --ink: #1b2a26;
+            --muted: #6b7c77;
+            --surface: #ffffff;
+            --success: #2e9e5b;
+            --radius: 24px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            justify-content: center;
+            padding: 24px;
+            background:
+                radial-gradient(1200px 600px at 15% -10%, rgba(46, 125, 50, 0.18), transparent 60%),
+                radial-gradient(1000px 500px at 110% 110%, rgba(38, 166, 154, 0.14), transparent 55%),
+                linear-gradient(160deg, #f6fbf7 0%, #eef5f0 55%, #e6f1ea 100%);
+            color: var(--ink);
         }
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 350px;
-            width: 90%;
-        }
-        h2 { margin: 10px 0 5px; color: #333; }
-        p { color: #666; font-size: 14px; margin-bottom: 25px; }
-        
-        .btn-install {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.3s;
-        }
-        .btn-install:hover { background-color: #0056b3; }
+        .deco { position: fixed; border-radius: 50%; filter: blur(90px); opacity: .35; pointer-events: none; }
+        .deco.a { width: 320px; height: 320px; background: #4caf50; top: -120px; left: -100px; }
+        .deco.b { width: 280px; height: 280px; background: #26a69a; bottom: -120px; right: -80px; }
 
-        .progress-container {
-            display: none;
-            margin-top: 20px;
+        .card {
+            position: relative;
+            background: var(--surface);
+            width: 100%;
+            max-width: 420px;
+            border-radius: var(--radius);
+            padding: 40px 32px 32px;
+            text-align: center;
+            box-shadow: 0 24px 60px -20px rgba(13, 92, 60, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            overflow: hidden;
         }
-        .status-text {
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--green), #26a69a, var(--green));
+        }
+
+        .logo {
+            width: 84px;
+            height: 84px;
+            margin: 0 auto 18px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1f6b48 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 24px -8px rgba(46, 125, 50, 0.55);
+        }
+        .logo svg { width: 46px; height: 46px; }
+
+        h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; }
+        .subtitle { color: var(--muted); font-size: 14px; font-weight: 500; margin-top: 6px; }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            padding: 6px 14px;
+            background: var(--green-soft);
+            color: var(--green-dark);
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 999px;
+            letter-spacing: .3px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 14px;
+            padding: 15px 20px;
+            transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+        }
+        .btn-primary {
+            margin-top: 26px;
+            background: linear-gradient(135deg, #2e7d32, #1f7a54);
+            color: #fff;
+            box-shadow: 0 10px 22px -8px rgba(46, 125, 50, 0.65);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -8px rgba(46, 125, 50, 0.7); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-primary:disabled { opacity: .6; cursor: default; transform: none; box-shadow: none; }
+        .btn-secondary {
+            margin-top: 10px;
+            background: #fff;
+            color: var(--green-dark);
+            border: 1.5px solid var(--green-light);
             font-size: 13px;
-            color: #007bff;
+            font-weight: 600;
+            padding: 11px 18px;
+        }
+        .btn-secondary:hover { background: var(--green-soft); }
+
+        .progress-container { display: none; margin-top: 26px; }
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
             font-weight: 600;
             margin-bottom: 8px;
         }
+        .status-text { color: var(--green-dark); }
+        .percent { color: var(--muted); font-variant-numeric: tabular-nums; }
         .progress-bar-bg {
-            background-color: #e0e0e0;
-            border-radius: 10px;
+            background: #e4ede6;
+            border-radius: 999px;
             height: 12px;
-            width: 100%;
             overflow: hidden;
         }
         .progress-bar-fill {
-            background-color: #007bff;
             height: 100%;
             width: 0%;
-            transition: width 0.3s;
-            animation: pulse 1.5s infinite;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #2e7d32, #26a69a);
+            transition: width .25s ease;
+            position: relative;
+        }
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        .done {
+            display: none;
+            margin-top: 26px;
+            padding: 14px;
+            background: #eafaf1;
+            border: 1px solid #b7ebcc;
+            color: var(--success);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 14px;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-        }
-
-        .alt-links {
-            margin-top: 18px;
-            font-size: 12px;
-            color: #999;
-        }
-        .alt-links a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .alt-links a:hover { text-decoration: underline; }
+        .alt-links { margin-top: 22px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+        .alt-links a { color: var(--green-dark); font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--green-light); }
+        .alt-links a:hover { border-bottom-style: solid; }
+        .footer { margin-top: 18px; font-size: 11px; color: #9db3a8; }
     </style>
 </head>
 <body>
+<div class="deco a"></div>
+<div class="deco b"></div>
 
 <div class="card">
-    <h2>Seneve App</h2>
-    <p>Application officielle Android</p>
+    <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 22c-4-3-7-6.2-7-10a7 7 0 0 1 14 0c0 3.8-3 7-7 10Z" fill="#fff" fill-opacity=".95"/>
+            <path d="M12 19.5V10M12 10c-2.4 0-4.4-1.4-5.2-3.4C7 7.2 7 8.2 7.4 9 8.4 10 10 10 12 10Zm0 0c2.4 0 4.4-1.4 5.2-3.4-.2.6-.2 1.6-.6 2.4C15 10 14 10 12 10Z" stroke="#1f6b48" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
 
-    <button id="downloadBtn" class="btn-install" onclick="startDownload()">Installer l'application</button>
+    <h1>Sénevé</h1>
+    <p class="subtitle">Enseignements · Dons · Évangélisation</p>
+    <div class="badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 2 3 6 3 11v8c0 1.1.9 2 2 2h3v-7H5v-3a7 7 0 0 1 14 0v3h-3v7h3c1.1 0 2-.9 2-2v-8c0-5-4-9-9-9Z"/></svg>
+        Application officielle · CPC Bénin
+    </div>
+
+    <button id="downloadBtn" class="btn btn-primary" onclick="startDownload()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        Installer l'application
+    </button>
 
     <div id="progressContainer" class="progress-container">
-        <div id="statusText" class="status-text">Préparation du téléchargement...</div>
+        <div class="progress-top">
+            <span id="statusText" class="status-text">Préparation du téléchargement…</span>
+            <span id="percentText" class="percent">0%</span>
+        </div>
         <div class="progress-bar-bg">
             <div id="progressBar" class="progress-bar-fill"></div>
         </div>
     </div>
 
-    <div class="alt-links">
-        Téléphone ancien ? <a href="https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-armeabi-v7a-release.apk">Télécharger la version armeabi-v7a</a>
+    <div id="doneBox" class="done">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M20 6 9 17l-5-5"/></svg>
+        Téléchargement terminé ! Ouvrez <b>Seneve-App.apk</b> depuis vos <b>Téléchargements</b> pour installer.
     </div>
+
+    <button id="altBtn" class="btn btn-secondary" onclick="startDownload(false)" style="display:none">Réessayer le téléchargement</button>
+
+    <div class="alt-links">
+        Téléphone ancien ? <a href="https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-armeabi-v7a-release.apk">Version armeabi-v7a</a> ·
+        <a href="https://github.com/jocelynkassa32-source/seneve-apk/releases/latest">Voir les versions</a>
+    </div>
+    <div class="footer">Sénevé © 2026 · CPC Bénin</div>
 </div>
 
 <script>
 const apkUrl = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-arm64-v8a-release.apk';
 const apkFileName = 'Seneve-App.apk';
 
-async function startDownload() {
-    const btn = document.getElementById('downloadBtn');
-    const progressContainer = document.getElementById('progressContainer');
-    const progressBar = document.getElementById('progressBar');
-    const statusText = document.getElementById('statusText');
+const btn = document.getElementById('downloadBtn');
+const altBtn = document.getElementById('altBtn');
+const progressContainer = document.getElementById('progressContainer');
+const progressBar = document.getElementById('progressBar');
+const percentText = document.getElementById('percentText');
+const statusText = document.getElementById('statusText');
+const doneBox = document.getElementById('doneBox');
 
-    btn.style.display = 'none';
+function setProgress(pct, status) {
+    const value = Math.max(0, Math.min(100, pct));
+    progressBar.style.width = value + '%';
+    percentText.innerText = Math.round(value) + '%';
+    if (status) statusText.innerText = status;
+}
+
+async function startDownload(primary = true) {
+    if (!primary) {
+        btn.style.display = 'none';
+        altBtn.style.display = 'none';
+        doneBox.style.display = 'none';
+    }
     progressContainer.style.display = 'block';
+    altBtn.style.display = 'none';
+    btn.style.display = 'none';
+    btn.disabled = true;
+    setProgress(0, 'Connexion au serveur…');
 
     try {
-        statusText.innerText = "Téléchargement en cours...";
-        progressBar.style.width = '50%';
-
         const response = await fetch(apkUrl);
-        if (!response.ok) throw new Error('Erreur réseau');
+        if (!response.ok) throw new Error('Erreur réseau (' + response.status + ')');
 
-        const blob = await response.blob();
-        progressBar.style.width = '100%';
-        progressBar.style.backgroundColor = '#28a745';
-        statusText.innerText = "Téléchargement terminé ! Lancement de l'installation...";
+        const total = parseInt(response.headers.get('Content-Length'), 10) || 0;
 
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = apkFileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        if (total && response.body && typeof response.body.getReader === 'function') {
+            const reader = response.body.getReader();
+            const chunks = [];
+            let received = 0;
 
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                chunks.push(value);
+                received += value.length;
+                setProgress((received / total) * 100, 'Téléchargement en cours…');
+            }
+
+            const blob = new Blob(chunks, { type: 'application/vnd.android.package-archive' });
+            saveBlob(blob);
+        } else {
+            setProgress(30, 'Téléchargement en cours…');
+            const blob = await response.blob();
+            setProgress(100, 'Téléchargement terminé !');
+            saveBlob(blob);
+        }
+
+        setProgress(100, 'Téléchargement terminé !');
+        doneBox.style.display = 'block';
     } catch (error) {
-        // En cas de blocage CORS/Réseau par Android, basculement automatique sur le téléchargement direct
-        statusText.innerText = "Lancement du téléchargement direct...";
-        progressBar.style.width = '100%';
-        
+        setProgress(0, 'Lancement du téléchargement direct…');
         const a = document.createElement('a');
         a.href = apkUrl;
         a.download = apkFileName;
         document.body.appendChild(a);
         a.click();
         a.remove();
+        doneBox.style.display = 'block';
     }
+}
 
-    setTimeout(() => {
-        statusText.innerHTML = "Si l'installation ne démarre pas, vérifiez vos <b>Téléchargements</b> et ouvrez le fichier <b>app-arm64-v8a-release.apk</b>.";
-    }, 3000);
+function saveBlob(blob) {
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = apkFileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
 }
 </script>
-
 </body>
 </html>
