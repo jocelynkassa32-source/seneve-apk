@@ -196,10 +196,11 @@
         Application officielle · CPC Bénin
     </div>
 
-    <button id="downloadBtn" class="btn btn-primary" onclick="startDownload()">
+    <button id="downloadBtn" class="btn btn-primary" onclick="startDownload()" disabled>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-        Installer l'application
+        <span id="downloadLabel">Détection de votre téléphone…</span>
     </button>
+    <div class="badge" id="abiBadge" style="display:none">Version pour votre téléphone</div>
 
     <div id="progressContainer" class="progress-container">
         <div class="progress-top">
@@ -219,23 +220,60 @@
     <button id="altBtn" class="btn btn-secondary" onclick="startDownload(false)" style="display:none">Réessayer le téléchargement</button>
 
     <div class="alt-links">
-        Téléphone ancien ? <a href="https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-armeabi-v7a-release.apk">Version armeabi-v7a</a> ·
         <a href="https://github.com/jocelynkassa32-source/seneve-apk/releases/latest">Voir les versions</a>
     </div>
     <div class="footer">Sénevé © 2026 · CPC Bénin</div>
 </div>
 
 <script>
-const apkUrl = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-arm64-v8a-release.apk';
+const baseRelease = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/';
 const apkFileName = 'Seneve-App.apk';
 
+const abiFiles = {
+    'arm64-v8a': 'app-arm64-v8a-release.apk',
+    'armeabi-v7a': 'app-armeabi-v7a-release.apk',
+    'x86_64': 'app-x86_64-release.apk'
+};
+
+let apkUrl = baseRelease + abiFiles['arm64-v8a'];
+
 const btn = document.getElementById('downloadBtn');
+const downloadLabel = document.getElementById('downloadLabel');
+const abiBadge = document.getElementById('abiBadge');
 const altBtn = document.getElementById('altBtn');
 const progressContainer = document.getElementById('progressContainer');
 const progressBar = document.getElementById('progressBar');
 const percentText = document.getElementById('percentText');
 const statusText = document.getElementById('statusText');
 const doneBox = document.getElementById('doneBox');
+
+function detectAbi() {
+    if (navigator.userAgentData && typeof navigator.userAgentData.getHighEntropyValues === 'function') {
+        return navigator.userAgentData
+            .getHighEntropyValues(['architecture', 'bitness'])
+            .then(({ architecture, bitness }) => {
+                const arch = (architecture || '').toLowerCase();
+                const bits = (bitness || '').toLowerCase();
+                if (arch.includes('arm')) return bits.includes('64') ? 'arm64-v8a' : 'armeabi-v7a';
+                if (arch.includes('x86')) return 'x86_64';
+                return 'arm64-v8a';
+            })
+            .catch(() => 'arm64-v8a');
+    }
+    const platform = (navigator.platform || '').toLowerCase();
+    if (platform.includes('arm')) {
+        return Promise.resolve(/v7l/.test(platform) ? 'armeabi-v7a' : 'arm64-v8a');
+    }
+    return Promise.resolve('arm64-v8a');
+}
+
+detectAbi().then(abi => {
+    apkUrl = baseRelease + abiFiles[abi];
+    abiBadge.textContent = 'Version pour votre téléphone (' + abi + ')';
+    abiBadge.style.display = 'inline-flex';
+    downloadLabel.textContent = 'Installer l\'application';
+    btn.disabled = false;
+});
 
 function setProgress(pct, status) {
     const value = Math.max(0, Math.min(100, pct));
