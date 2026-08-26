@@ -89,6 +89,18 @@
             letter-spacing: .3px;
         }
 
+        .version-tag {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 4px 10px;
+            background: #f0f4f1;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+            letter-spacing: .5px;
+        }
+
         .btn {
             display: flex;
             align-items: center;
@@ -195,12 +207,13 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 2 3 6 3 11v8c0 1.1.9 2 2 2h3v-7H5v-3a7 7 0 0 1 14 0v3h-3v7h3c1.1 0 2-.9 2-2v-8c0-5-4-9-9-9Z"/></svg>
         Application officielle · CPC Bénin
     </div>
+    <div class="version-tag">Version 1.0.4</div>
 
-    <button id="downloadBtn" class="btn btn-primary" onclick="startDownload()" disabled>
+    <button id="downloadBtn" class="btn btn-primary" onclick="startDownload()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-        <span id="downloadLabel">Détection de votre téléphone…</span>
+        <span id="downloadLabel">Installer l'application</span>
     </button>
-    <div class="badge" id="abiBadge" style="display:none">Version pour votre téléphone</div>
+    <div class="badge" id="abiBadge" style="display:inline-flex">Compatible avec tous les téléphones</div>
 
     <div id="progressContainer" class="progress-container">
         <div class="progress-top">
@@ -231,11 +244,11 @@
 </div>
 
 <script>
-const baseRelease = 'https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/';
+const apiUrl = 'https://api.github.com/repos/jocelynkassa32-source/seneve-apk/releases/latest';
 const apkFileName = 'Seneve-App.apk';
-const apkFile = 'app-armeabi-v7a-release.apk';
 
-let apkUrl = baseRelease + apkFile;
+let apkUrl = null;
+let apkVersion = '1.0.4';
 
 const btn = document.getElementById('downloadBtn');
 const downloadLabel = document.getElementById('downloadLabel');
@@ -246,11 +259,45 @@ const progressBar = document.getElementById('progressBar');
 const percentText = document.getElementById('percentText');
 const statusText = document.getElementById('statusText');
 const doneBox = document.getElementById('doneBox');
+const versionTag = document.querySelector('.version-tag');
 
-abiBadge.textContent = 'Compatible avec tous les téléphones';
-abiBadge.style.display = 'inline-flex';
-downloadLabel.textContent = 'Installer l\'application';
-btn.disabled = false;
+function setVersionTag(version) {
+    if (!versionTag) return;
+    versionTag.textContent = 'Version ' + version;
+}
+
+function findApkAsset(assets) {
+    if (!Array.isArray(assets)) return null;
+    for (const asset of assets) {
+        const name = (asset && asset.name) ? String(asset.name).toLowerCase() : '';
+        if (name.endsWith('.apk')) {
+            return asset;
+        }
+    }
+    return null;
+}
+
+async function resolveLatestRelease() {
+    try {
+        const response = await fetch(apiUrl, {
+            headers: { 'Accept': 'application/vnd.github+json' }
+        });
+        if (!response.ok) throw new Error('GitHub API ' + response.status);
+        const data = await response.json();
+        const tag = (data && data.tag_name) ? String(data.tag_name) : '';
+        const version = tag.startsWith('v') || tag.startsWith('V') ? tag.substring(1) : tag;
+        if (version) apkVersion = version;
+        setVersionTag(apkVersion);
+        const asset = findApkAsset(data && data.assets);
+        if (asset && asset.browser_download_url) {
+            return asset.browser_download_url;
+        }
+    } catch (e) {
+        console.warn('[Sénevé] Impossible de récupérer la dernière release :', e);
+    }
+    // Fallback : URL connue si l'API échoue
+    return 'https://github.com/jocelynkassa32-source/seneve-apk/releases/latest/download/app-armeabi-v7a-release.apk';
+}
 
 function setProgress(pct, status) {
     const value = Math.max(0, Math.min(100, pct));
@@ -270,6 +317,10 @@ async function startDownload(primary = true) {
     btn.style.display = 'none';
     btn.disabled = true;
     setProgress(0, 'Connexion au serveur…');
+
+    if (!apkUrl) {
+        apkUrl = await resolveLatestRelease();
+    }
 
     try {
         const response = await fetch(apkUrl);
@@ -323,6 +374,11 @@ function saveBlob(blob) {
     a.remove();
     window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
 }
+
+// Pré-charger la dernière release en arrière-plan pour que le bouton soit déjà prêt
+resolveLatestRelease().then(url => {
+    apkUrl = url;
+}).catch(() => {});
 </script>
 </body>
 </html>
