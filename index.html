@@ -324,7 +324,7 @@ async function startDownload(primary = true) {
 
     try {
         const response = await fetch(apkUrl);
-        if (!response.ok) throw new Error('Erreur réseau (' + response.status + ')');
+        if (!response.ok) throw new Error('Erreur réseau  (' + response.status + ')');
 
         const total = parseInt(response.headers.get('Content-Length'), 10) || 0;
 
@@ -338,7 +338,7 @@ async function startDownload(primary = true) {
                 if (done) break;
                 chunks.push(value);
                 received += value.length;
-                setProgress((received / total) * 100, 'Téléchargement en cours…');
+                setProgress((received / total) * 100, 'Téléchargement en cours de traitement…');
             }
 
             const blob = new Blob(chunks, { type: 'application/vnd.android.package-archive' });
@@ -375,7 +375,7 @@ function saveBlob(blob) {
     window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 5000);
 }
 
-// Pré-charger la dernière release en arrière-plan pour que le bouton soit déjà prêt
+// Pré-charger la dernière release en arrière-plan pour que le bouton soit déjà prêt 
 resolveLatestRelease().then(url => {
     apkUrl = url;
 }).catch(() => {});
